@@ -62,8 +62,8 @@ public class Controller {
 	 */
 	public void setValorPlanicie(int[][] planicie, int posX, int posY, EnumStatusLocal status) {
 
-		if(planicie[posX][posY] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor)
-			planicie[posX][posY] = status.valor;
+		if(planicie[posX][posY] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.getCodigo())
+			planicie[posX][posY] = status.getCodigo();
 
 	}
 
@@ -125,7 +125,7 @@ public class Controller {
 		for(Tripulante tripulante : tripulantes){
 
 			// verifica se ja nao havia marcado como local contendo tripulante
-			if(planicie[x][y] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor) {
+			if(planicie[x][y] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.getCodigo()) {
 
 				// verifica  se ha tripulante na localizacao selecionada
 				if((tripulante.getLocal().getX() == x) && (tripulante.getLocal().getY() == y)){
@@ -155,21 +155,10 @@ public class Controller {
 
 			planicieStr += String.format("%2d", i + 1);
 			for(int j = 0; j < tamanhoDaPlanicie; j++){
-				String info = "_";
 
-				// tripulante encontrado
-				if(planicie[i][j] == EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor)
-					info = "x";
-
-				// tripulante na area adjacente
-				else if(planicie[i][j] == 2)
-					info = "!";
-
-				// local nao contem tripulante adjacente
-				else if(planicie[i][j] == 3)
-					info = "*";
-
-				planicieStr = String.format("%s %s ", planicieStr, info);
+				char info = EnumStatusLocal.getStatusLocal(planicie[i][j]).getValor();
+				
+				planicieStr = String.format("%s %c ", planicieStr, info);
 			}
 			planicieStr += "\n";
 		}

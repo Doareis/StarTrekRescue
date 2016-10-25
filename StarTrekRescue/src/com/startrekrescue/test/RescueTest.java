@@ -42,7 +42,7 @@ public class RescueTest extends TestCase{
 				if(controller.verificaAdjacencia(coordenadaX, coordenadaY, tripulantes, planicie) == false){
 
 					// nao encontrou tripulante (nem ao menos aos arredores)
-					planicie[coordenadaX][coordenadaY] = EnumStatusLocal.SEM_TRIPULANTE.valor; 
+					planicie[coordenadaX][coordenadaY] = EnumStatusLocal.SEM_TRIPULANTE.getCodigo(); 
 				}
 			}
 			else{
@@ -72,7 +72,7 @@ public class RescueTest extends TestCase{
 	private void verificaSePlanicieFoiMarcadaCorretamente(int[][] planicie, List<Tripulante> tripulantes) {
 		
 		for(Tripulante tripulante : tripulantes){
-			assertEquals(planicie[tripulante.getLocal().getX()][tripulante.getLocal().getY()], EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor);
+			assertEquals(planicie[tripulante.getLocal().getX()][tripulante.getLocal().getY()], EnumStatusLocal.TRIPULANTE_ENCONTRADO.getCodigo());
 		}
 		
 	}
