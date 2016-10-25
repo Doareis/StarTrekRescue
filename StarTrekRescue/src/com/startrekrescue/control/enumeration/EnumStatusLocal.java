@@ -6,7 +6,7 @@ package com.startrekrescue.control.enumeration;
  */
 public enum EnumStatusLocal {
 
-	SEM_VERIFICACAO(0, ' '),
+	SEM_VERIFICACAO(0, '_'),
 	TRIPULANTE_ENCONTRADO(1, 'X'),
 	TRIPULANTE_NAS_PROXIMIDADES(2, '!'),
 	SEM_TRIPULANTE(3, '*');

@@ -13,6 +13,9 @@ public class Controller {
 
 	private int numeroDeSinalizadoresLancados = 0;
 	private int numeroDeTripulantesEncontrados = 0;
+	
+	private int [][] planicie;
+	private List<Tripulante> tripulantes;
 
 	public int getNumeroDeTripulantesEcontrados() {
 		return numeroDeTripulantesEncontrados;
@@ -22,6 +25,12 @@ public class Controller {
 		return numeroDeSinalizadoresLancados;
 	}
 
+	public Controller() {
+		
+		gerarPosicaoDosTripulantes(Constants.NUMERO_DE_TRIPULANTES);
+		planicie = new int[Constants.TAMANHO_PLANICIE][Constants.TAMANHO_PLANICIE];
+	}
+	
 	/*
 	 * Verifica se a nova posicao gerada aleatoriamente ja nao foi gerada anteriormente
 	 */
@@ -38,13 +47,13 @@ public class Controller {
 	/*
 	 * Devolve a lista gerada aleatoriamente com a posicao dos tripulantes na planicies
 	 */
-	public List<Tripulante> gerarPosicaoDosTripulantes(int numeroDeTripulantes){
+	public void gerarPosicaoDosTripulantes(int numeroDeTripulantes){
 
-		List<Tripulante> tripulantes = new ArrayList<Tripulante>();
+		tripulantes = new ArrayList<Tripulante>();
 		for(int i = 0; i < numeroDeTripulantes; ){
 			Random gerador = new Random();
-			int x = gerador.nextInt(Constants.TAMANHO);
-			int y = gerador.nextInt(Constants.TAMANHO);
+			int x = gerador.nextInt(Constants.TAMANHO_PLANICIE);
+			int y = gerador.nextInt(Constants.TAMANHO_PLANICIE);
 
 			// verifica se a posicao gerada ja nao foi selecionada anteriormente
 			if(ehNovaPosicao(tripulantes, x, y)){
@@ -53,14 +62,13 @@ public class Controller {
 			}
 		}
 
-		return tripulantes;
 	}
 
 	/*
 	 * seta status na planicie
 	 * supoe que as coordenadas estao na planicie, portato essa validacao eh feita por fora
 	 */
-	public void setValorPlanicie(int[][] planicie, int posX, int posY, EnumStatusLocal status) {
+	public void setValorPlanicie(int posX, int posY, EnumStatusLocal status) {
 
 		if(planicie[posX][posY] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.getCodigo())
 			planicie[posX][posY] = status.getCodigo();
@@ -72,7 +80,7 @@ public class Controller {
 	 * Devolve true se encontra tripulante nas proximidades
 	 * false caso conrario
 	 */
-	public boolean verificaAdjacencia(int x, int y, List<Tripulante> tripulantes, int[][] planicie) {
+	public boolean verificaAdjacencia(int x, int y) {
 		for(Tripulante tripulante : tripulantes){
 
 			int posX = tripulante.getLocal().getX();
@@ -81,7 +89,7 @@ public class Controller {
 			if((Math.abs(x - posX) <= 1) && (Math.abs(y - posY) <= 1)){
 
 				// marca as posicoes adjacentes
-				realizaMarcacoesNasProximidades(planicie, x, y, posX, posY);
+				realizaMarcacoesNasProximidades(x, y, posX, posY);
 				return true;
 			}
 		}
@@ -94,7 +102,7 @@ public class Controller {
 	 * local onde foi lancado o sinalizador. Dado a imprecisao do sinalizador, marca apenas locais adjacentes
 	 * que sejam em comum com o local do tripulante e do sinalizador
 	 */
-	private void realizaMarcacoesNasProximidades(int[][] planicie, int x, int y, int tripulantePosX, int tripulantePosY) {
+	private void realizaMarcacoesNasProximidades(int x, int y, int tripulantePosX, int tripulantePosY) {
 		
 		int delta = 1;
 		
@@ -106,7 +114,7 @@ public class Controller {
 					
 					// se esta nas proximidades do tripulante
 					if((Math.abs(i - tripulantePosX) <= 1) && (Math.abs(j - tripulantePosY) <= 1)){
-						setValorPlanicie(planicie, i, j, EnumStatusLocal.TRIPULANTE_NAS_PROXIMIDADES);
+						setValorPlanicie(i, j, EnumStatusLocal.TRIPULANTE_NAS_PROXIMIDADES);
 					}
 				}
 			}
@@ -118,18 +126,18 @@ public class Controller {
 	 * Devolve false, caso contrario
 	 * Incrementa o numero de sinalizadores lancados
 	 */
-	public boolean verificaSeEncontrouTripulante(int x, int y, List<Tripulante> tripulantes, int[][] planicie) {
+	public boolean verificaSeEncontrouTripulante(int x, int y) {
 
 		numeroDeSinalizadoresLancados++;
 
-		for(Tripulante tripulante : tripulantes){
+		for(Tripulante tripulante : getTripulantes()){
 
 			// verifica se ja nao havia marcado como local contendo tripulante
 			if(planicie[x][y] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.getCodigo()) {
 
 				// verifica  se ha tripulante na localizacao selecionada
 				if((tripulante.getLocal().getX() == x) && (tripulante.getLocal().getY() == y)){
-					setValorPlanicie(planicie, x, y, EnumStatusLocal.TRIPULANTE_ENCONTRADO);
+					setValorPlanicie(x, y, EnumStatusLocal.TRIPULANTE_ENCONTRADO);
 					numeroDeTripulantesEncontrados++;
 					return true;
 				}
@@ -138,32 +146,40 @@ public class Controller {
 		return false;
 	}
 
+	public List<Tripulante> getTripulantes() {
+		return this.tripulantes;
+	}
+	
+	public int [][] getPlanicie() {
+		return this.planicie;
+	}
+
 	/*
 	 * Passa a planicie de matriz para forma String
 	 */
-	public String imprimePlanicie(int [][]planicie ){
+	public String imprimePlanicie(){
 
 		int tamanhoDaPlanicie = planicie.length;
-		String planicieStr = "  ";
+		StringBuilder planicieStr = new StringBuilder("  ");
 
 		// cabecalho
 		for(int i = 1; i <= tamanhoDaPlanicie; i++)
-			planicieStr = String.format("%s %d ", planicieStr, i);
-		planicieStr += "\n";
+			planicieStr.append(" " + i);
+		planicieStr.append("\n");
 
 		for(int i = 0; i < tamanhoDaPlanicie; i++) {
 
-			planicieStr += String.format("%2d", i + 1);
+			planicieStr.append(String.format("%2d", i + 1));
 			for(int j = 0; j < tamanhoDaPlanicie; j++){
 
 				char info = EnumStatusLocal.getStatusLocal(planicie[i][j]).getValor();
 				
-				planicieStr = String.format("%s %c ", planicieStr, info);
+				planicieStr.append(" " + info);
 			}
-			planicieStr += "\n";
+			planicieStr.append("\n");
 		}
 
-		return planicieStr;
+		return planicieStr.toString();
 	}
 
 	/*
