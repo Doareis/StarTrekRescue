@@ -1,6 +1,7 @@
 package com.startrekrescue.test;
 
 import java.util.List;
+import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -13,7 +14,9 @@ public class RescueTest extends TestCase{
 
 	private int getCoordenadasLancamento(){
 
-		return -1;
+		Random gerador = new Random();
+		return  gerador.nextInt(Constants.TAMANHO);
+		
 	}
 
 	public void test(){
@@ -22,8 +25,10 @@ public class RescueTest extends TestCase{
 		Controller controller = new Controller();
 
 		int numeroDeTripulantesQueFaltaEncontrar = Constants.NUMERO_DE_TRIPULANTES;
-		List<Tripulante> tripulantes = controller.gerarPosicaoDosTripulantes(Constants.NUMERO_DE_TRIPULANTES, Constants.TAMANHO);
-		verificaListaDeTripulantes();
+		List<Tripulante> tripulantes = controller.gerarPosicaoDosTripulantes(Constants.NUMERO_DE_TRIPULANTES);
+		
+		// teste #1
+		verificaListaDeTripulantes(tripulantes);
 		
 		while(controller.getNumeroDeTripulantesEcontrados() != tripulantes.size()){
 
@@ -42,6 +47,8 @@ public class RescueTest extends TestCase{
 			}
 			else{
 				numeroDeTripulantesQueFaltaEncontrar--;
+				
+				// teste #2
 				assertTrue(numeroDeTripulantesQueFaltaEncontrar >= 0);
 			}
 
@@ -50,11 +57,25 @@ public class RescueTest extends TestCase{
 		assertEquals(controller.getNumeroDeTripulantesEcontrados(), tripulantes.size());
 		assertEquals(numeroDeTripulantesQueFaltaEncontrar, 0);
 
+		System.out.println(controller.imprimePlanicie(planicie));
 	}
 
-	private void verificaListaDeTripulantes() {
+	private void verificaListaDeTripulantes(List<Tripulante> tripulantes) {
 		
-		assertTrue(true);
+		assertEquals(tripulantes.size(), Constants.NUMERO_DE_TRIPULANTES);
+		
+		// verifica se nao ha posicoes iguais
+		for(int i = 0; i < tripulantes.size(); i++){
+			Tripulante tripulanteA = tripulantes.get(i);
+			for(int j = i + 1; j < tripulantes.size(); j++){
+				Tripulante tripulanteB = tripulantes.get(j);
+				
+				assertFalse(
+						(tripulanteA.getLocal().getX() == tripulanteB.getLocal().getX()) && 
+						(tripulanteA.getLocal().getY() == tripulanteB.getLocal().getY()));
+			}
+		}
+		
 		
 	}
 }
