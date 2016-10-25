@@ -61,36 +61,58 @@ public class Controller {
 	 * supoe que as coordenadas estao na planicie, portato essa validacao eh feita por fora
 	 */
 	public void setValorPlanicie(int[][] planicie, int posX, int posY, EnumStatusLocal status) {
-		
+
 		if(planicie[posX][posY] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor)
 			planicie[posX][posY] = status.valor;
-		
+
 	}
-	
+
 	/*
 	 * Verifica se ha tripulante nas proximidades e faz as devidas marcacoes na planicie
 	 * Devolve true se encontra tripulante nas proximidades
 	 * false caso conrario
 	 */
 	public boolean verificaAdjacencia(int x, int y, List<Tripulante> tripulantes, int[][] planicie) {
-		numeroDeSinalizadoresLancados++;
-
 		for(Tripulante tripulante : tripulantes){
 
-			// verifica se ja nao havia marcado como local contendo tripulante
-			if(planicie[x][y] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor) {
-				
-				// verifica  se ha tripulante na localizacao selecionada
-				if((tripulante.getLocal().getX() == x) && (tripulante.getLocal().getY() == y)){
-					setValorPlanicie(planicie, x, y, EnumStatusLocal.TRIPULANTE_ENCONTRADO);
-					numeroDeTripulantesEncontrados++;
-					return true;
-				}
+			int posX = tripulante.getLocal().getX();
+			int posY = tripulante.getLocal().getY();
+
+			if((Math.abs(x - posX) <= 1) && (Math.abs(y - posY) <= 1)){
+
+				// marca as posicoes adjacentes
+				realizaMarcacoesNasProximidades(planicie, x, y, posX, posY);
+				return true;
 			}
 		}
+
 		return false;
 	}
 
+	/*
+	 * Realiza as marcacoes quando encontra tripulantes nas proximidades do
+	 * local onde foi lancado o sinalizador. Dado a imprecisao do sinalizador, marca apenas locais adjacentes
+	 * que sejam em comum com o local do tripulante e do sinalizador
+	 */
+	private void realizaMarcacoesNasProximidades(int[][] planicie, int x, int y, int tripulantePosX, int tripulantePosY) {
+		
+		int delta = 1;
+		
+		for(int i = x - 1; i <= x + delta; i++)
+			for(int j = y - 1; j <= y + delta; j++){
+				
+				// verifica os limites da planicie
+				if((i >= 0 && i < planicie.length) && (j >= 0 && j < planicie.length)){
+					
+					// se esta nas proximidades do tripulante
+					if((Math.abs(i - tripulantePosX) <= 1) && (Math.abs(j - tripulantePosY) <= 1)){
+						setValorPlanicie(planicie, i, j, EnumStatusLocal.TRIPULANTE_NAS_PROXIMIDADES);
+					}
+				}
+			}
+				
+	}
+	
 	/*
 	 * Devolve true se encontra a posicao exata de um tripulante e marca sua localizacao na planicie
 	 * Devolve false, caso contrario
@@ -104,7 +126,7 @@ public class Controller {
 
 			// verifica se ja nao havia marcado como local contendo tripulante
 			if(planicie[x][y] != EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor) {
-				
+
 				// verifica  se ha tripulante na localizacao selecionada
 				if((tripulante.getLocal().getX() == x) && (tripulante.getLocal().getY() == y)){
 					setValorPlanicie(planicie, x, y, EnumStatusLocal.TRIPULANTE_ENCONTRADO);
@@ -128,9 +150,9 @@ public class Controller {
 		for(int i = 1; i <= tamanhoDaPlanicie; i++)
 			planicieStr = String.format("%s %d ", planicieStr, i);
 		planicieStr += "\n";
-		
+
 		for(int i = 0; i < tamanhoDaPlanicie; i++) {
-			
+
 			planicieStr += String.format("%2d", i + 1);
 			for(int j = 0; j < tamanhoDaPlanicie; j++){
 				String info = "_";

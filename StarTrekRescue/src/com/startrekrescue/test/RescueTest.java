@@ -54,10 +54,27 @@ public class RescueTest extends TestCase{
 
 		}
 		
+		// teste #3
 		assertEquals(controller.getNumeroDeTripulantesEcontrados(), tripulantes.size());
+		
+		// teste #4
 		assertEquals(numeroDeTripulantesQueFaltaEncontrar, 0);
+		
+		// Teste #5
+		verificaSePlanicieFoiMarcadaCorretamente(planicie, tripulantes);
 
 		System.out.println(controller.imprimePlanicie(planicie));
+	}
+
+	/*
+	 * verifica se na planicie foram marcados os tripulantes nas posicoes corretas
+	 */
+	private void verificaSePlanicieFoiMarcadaCorretamente(int[][] planicie, List<Tripulante> tripulantes) {
+		
+		for(Tripulante tripulante : tripulantes){
+			assertEquals(planicie[tripulante.getLocal().getX()][tripulante.getLocal().getY()], EnumStatusLocal.TRIPULANTE_ENCONTRADO.valor);
+		}
+		
 	}
 
 	private void verificaListaDeTripulantes(List<Tripulante> tripulantes) {
