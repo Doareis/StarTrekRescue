@@ -1,9 +1,10 @@
 package com.startrekrescue.model.bean;
 
+// classe de localizacao de tripulantes.
 public class Localizacao {
 
-	private int x;
-	private int y;
+	private int x = 0;
+	private int y = 0;
 	
 	public Localizacao(int x, int y) {
 		setX(x);

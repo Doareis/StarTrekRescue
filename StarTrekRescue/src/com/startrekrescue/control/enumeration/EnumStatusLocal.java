@@ -1,8 +1,8 @@
 package com.startrekrescue.control.enumeration;
 
 /*
- * Enum com os possiveis status de cada posicao na planicie
- * Guarda o codigo e o respectivo caracter para representacao grafica
+ * Enum com os possiveis status de cada posicao na planicie.
+ * Guarda o codigo e o respectivo caracter para representacao grafica.
  */
 public enum EnumStatusLocal {
 
@@ -16,8 +16,8 @@ public enum EnumStatusLocal {
 
 	public static EnumStatusLocal getStatusLocal(int codigo){
 		
-		for(EnumStatusLocal statusLocal : values()){
-			if(statusLocal.getCodigo() == codigo){
+		for (EnumStatusLocal statusLocal : values()){
+			if (statusLocal.getCodigo() == codigo){
 				return statusLocal;
 			}
 		}

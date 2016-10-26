@@ -13,12 +13,15 @@ public class Tripulante {
 	public int getId() {
 		return id;
 	}
+	
 	public void setId(int id) {
 		this.id = id;
 	}
+	
 	public Localizacao getLocal() {
 		return local;
 	}
+	
 	public void setLocal(Localizacao local) {
 		this.local = local;
 	}
